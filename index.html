@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>LoRaSense MQTT</title>
+  <script src="https://unpkg.com/paho-mqtt/mqtt.min.js"></script>
+</head>
+<body>
+  <h2>MQTT'den Gelen Veri:</h2>
+  <pre id="veri">Bekleniyor...</pre>
+
+  <script>
+    const client = new Paho.MQTT.Client("test.mosquitto.org", 8080, "client_" + Math.random());
+
+    client.connect({
+      onSuccess: () => {
+        console.log("MQTT'ye bağlandı!");
+        client.subscribe("/lorasense/data");
+      }
+    });
+
+    client.onMessageArrived = function(message) {
+      document.getElementById("veri").innerText = message.payloadString;
+    };
+  </script>
+</body>
+</html>
