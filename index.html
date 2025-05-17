@@ -2,26 +2,25 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>LoRaSense MQTT</title>
-  <script src="https://unpkg.com/paho-mqtt/mqtt.min.js"></script>
+  <title>LoRaSense - MQTT Dashboard</title>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 </head>
 <body>
-  <h2>MQTT'den Gelen Veri:</h2>
+  <h2>MQTT Üzerinden Gelen Veriler</h2>
   <pre id="veri">Bekleniyor...</pre>
 
   <script>
-    const client = new Paho.MQTT.Client("test.mosquitto.org", 8080, "client_" + Math.random());
+    const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt'); // WebSocket bağlantısı
+    const topic = 'lorasense/veri'; // sender tarafında bu topic'e veri gönderdiğini varsayıyoruz
 
-    client.connect({
-      onSuccess: () => {
-        console.log("MQTT'ye bağlandı!");
-        client.subscribe("/lorasense/data");
-      }
+    client.on('connect', () => {
+      console.log('MQTT bağlantısı başarılı');
+      client.subscribe(topic);
     });
 
-    client.onMessageArrived = function(message) {
-      document.getElementById("veri").innerText = message.payloadString;
-    };
+    client.on('message', (topic, message) => {
+      document.getElementById("veri").innerText = message.toString();
+    });
   </script>
 </body>
 </html>
