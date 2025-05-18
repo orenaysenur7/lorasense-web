@@ -1,26 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>LoRaSense - MQTT Dashboard</title>
+  <title>LoRaSense Canlı Veri</title>
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; background-color: #f0f8ff; }
+    h2 { color: #005f73; }
+    #veri { background: #fff; padding: 10px; border: 1px solid #ccc; font-size: 16px; }
+  </style>
 </head>
 <body>
-  <h2>MQTT Üzerinden Gelen Veriler</h2>
-  <pre id="veri">Bekleniyor...</pre>
+  <h2>📡 MQTT Üzerinden Canlı Veri</h2>
+  <div id="veri">Veri bekleniyor...</div>
 
   <script>
-    const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt'); // WebSocket bağlantısı
-    const topic = 'lorasense/veri'; // sender tarafında bu topic'e veri gönderdiğini varsayıyoruz
+    // HiveMQ WebSocket bağlantısı
+    const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt");
 
-    client.on('connect', () => {
-      console.log('MQTT bağlantısı başarılı');
-      client.subscribe(topic);
+    client.on("connect", () => {
+      console.log("MQTT bağlantısı başarılı");
+      client.subscribe("lorasense/veri"); // ESP32 bu topic'e veri göndermeli
     });
 
-    client.on('message', (topic, message) => {
+    client.on("message", (topic, message) => {
       document.getElementById("veri").innerText = message.toString();
+    });
+
+    client.on("error", (err) => {
+      console.error("MQTT HATA:", err);
     });
   </script>
 </body>
 </html>
+
