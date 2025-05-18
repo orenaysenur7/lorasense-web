@@ -20,7 +20,7 @@
 
     client.on("connect", () => {
       console.log("MQTT bağlantısı başarılı");
-      client.subscribe("lorasense/veri"); // ESP32 bu topic'e veri göndermeli
+      client.subscribe("lorasense/data"); // ESP32 bu topic'e veri göndermeli
     });
 
     client.on("message", (topic, message) => {
